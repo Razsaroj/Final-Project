@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -117,12 +118,36 @@ public class PersonController {
 	}
 	
 	
-	@RequestMapping(value="/panini", produces= {"application/xml", "application/json" })
-	public List<String[]> facetFeild() 
+	@RequestMapping(value="/panini")
+	public Collection<SolrInputDocument> facetFeild() 
 	{
 	
     	return ps.CVSThorHammer();
     }
+	
+	@RequestMapping(value="/delAll")
+	public void del() 
+	{
+	
+		 String urlString = "http://localhost:8983/solr/newCollFlim";
+	        String UML =    "http://localhost:8983/solr/fruitSeller";
+	        HttpSolrClient solr = new HttpSolrClient.Builder(UML).build();
+	        solr.setParser(new XMLResponseParser());
+	        
+	        try {
+				solr.deleteByQuery("*");
+				solr.commit(); 
+				
+			} catch (SolrServerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}  
+    }
+	
+	
 
 	
 	

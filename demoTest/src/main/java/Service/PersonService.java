@@ -6,11 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.XMLResponseParser;
+import org.apache.solr.common.SolrInputDocument;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -131,34 +137,104 @@ public class PersonService {
 		return CrawlList;
 	}
 	
-	public  List<String[]> CVSThorHammer() 
+	public Collection<SolrInputDocument> CVSThorHammer() 
 	{
-		 String csvFile = "D:\\Assignment\\Shazam.csv";
+		 String csvFile = "D:\\Assignment\\Transformer.csv";
 	        BufferedReader br = null;
 	        String line = "";
 	        String cvsSplitBy = ",";
 	        List<Graffiti> lst = new ArrayList();
 	        String[] aa=null;
 	        List<String[]> allData=null ;
+	        int i=1;
+	        List<Map<String,String>> mapLst = new ArrayList<Map<String,String>>();
+	        
+	        
+	        
+	        ////////////////  Solr //////////////////////////////////////////////////////
+	        String urlString = "http://localhost:8983/solr/newCollFlim";
+	        String UML =    "http://localhost:8983/solr/fruitSeller";
+	        HttpSolrClient solr = new HttpSolrClient.Builder(UML).build();
+	        solr.setParser(new XMLResponseParser());
+	        Collection<SolrInputDocument> doc = new ArrayList<SolrInputDocument>();
 	        
 	        try {
 	        	
 	        	
-	        	
+	        	/*
 	        	  FileReader filereader = new FileReader(csvFile); 
 	        	  CSVParser parser = new CSVParserBuilder().withSeparator(',').build(); 
 	        	  
 	        	   CSVReader csvReader = new CSVReaderBuilder(filereader).withCSVParser(parser).build();
 	        	   
 	        	   allData  = csvReader.readAll(); 
-	        	
+	        	*/
 	        	  
+	        	
+	        	br  = new BufferedReader(new FileReader(csvFile));
+	        	
+	        	String[] Header = null,Value;
+	        	
+	        	while((line = br.readLine())!=null) 
+	        	{
+	        		SolrInputDocument document1 = new SolrInputDocument();
+	        		Map<String,String> map = new HashMap<String,String>();
+	        		if(i==1) 
+	        		{
+	        			i++;
+	        			Header = line.split(",");
+	        		//	System.out.println("Header Count.............................. " + Header.length );
+	        		}
+	        		else 
+	        		{
+	        			Value = line.split(",");
+	        		//	System.out.println("Value Count.............................. " + Value.length );
+	        			
+	        			for(int j=0; j<Header.length;j++) 
+	        			{
+	        				if(j < Value.length) {
+	        				map.put(Header[j], Value[j]);
+	        				document1.addField(Header[j],Value[j]);
+	        				}
+	        				else
+	        				{map.put(Header[j],"");
+	        				document1.addField(Header[j],"");
+	        				}
+	        				
+	        				//System.out.println(map);
+	        			}
+	        		}
+	        		
+	        	
+	        		doc.add(document1);
+	        		mapLst.add(map);
+	        		//System.out.println(map);
+	        	}
+	        	
+	        	
 	        	
 	        	
 	        }catch(Exception e) 
 	        {
 	        	e.printStackTrace();
 	        }
+	        
+	        
+	        
+	        
+	        ////////////////////////////// Sending Whole data to Server //////////////////////////////////////////////
+	        
+	        try {
+	        	System.out.println(doc.toString());
+				solr.add(doc);
+				solr.commit();
+			} catch (SolrServerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	        	
 	        	
 	        	
@@ -250,7 +326,7 @@ public class PersonService {
 	                }
 	        }  */
 	        
-	       return allData;
+	       return doc;
 	}
 	
 	
