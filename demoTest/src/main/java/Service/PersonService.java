@@ -136,16 +136,28 @@ public class PersonService {
 		
 		return CrawlList;
 	}
+	
+	
+	
 	public Collection<SolrInputDocument> CVSThorHammer() 
 	{
 		 String csvFile = "D:\\Assignment\\Transformer.csv";
+		 String csvFiletransformer1 = "D:\\Assignment\\Transformer1.csv";
+		 String csvFiletransformer2 = "D:\\Assignment\\Transformer2.csv";
+
+		 
+		 List<String> fileList = new ArrayList<String>();
+		 fileList.add(csvFile);
+		 fileList.add(csvFiletransformer1);
+		 fileList.add(csvFiletransformer2);
+		 
 	        BufferedReader br = null;
 	        String line = "";
 	        String cvsSplitBy = ",";
 	        List<Graffiti> lst = new ArrayList();
 	        String[] aa=null;
 	        List<String[]> allData=null ;
-	        int i=1;
+	        
 	        List<Map<String,String>> mapLst = new ArrayList<Map<String,String>>();
 	        
 	        
@@ -156,22 +168,18 @@ public class PersonService {
 	        HttpSolrClient solr = new HttpSolrClient.Builder(UML).build();
 	        solr.setParser(new XMLResponseParser());
 	        Collection<SolrInputDocument> doc = new ArrayList<SolrInputDocument>();
-	        int k = 0;
 	        
+	        
+	        
+	        
+	        for(int arr=0; arr<fileList.size();arr++)
+	        {
+	        	int i=1;
+	        	int k = 0;
 	        try {
+	        
 	        	
-	        	
-	        	/*
-	        	  FileReader filereader = new FileReader(csvFile); 
-	        	  CSVParser parser = new CSVParserBuilder().withSeparator(',').build(); 
-	        	  
-	        	   CSVReader csvReader = new CSVReaderBuilder(filereader).withCSVParser(parser).build();
-	        	   
-	        	   allData  = csvReader.readAll(); 
-	        	*/
-	        	  
-	        	
-	        	br  = new BufferedReader(new FileReader(csvFile));
+	        	br  = new BufferedReader(new FileReader(fileList.get(arr).toString()) );
 	        	
 	        	String[] Header = null,Value;
 	        	
@@ -184,13 +192,15 @@ public class PersonService {
 	        			i++;
 	        			Header = line.split(",");
 	        			continue;
-	        		//	System.out.println("Header Count.............................. " + Header.length );
+	        	
 	        		}
 	        		else 
 	        		{
-	        			Value = line.split(",");
-	        		//	System.out.println("Value Count.............................. " + Value.length );
 	        			
+	        			Value = line.split(",");
+	        		
+	        			System.out.println("Header value ============================" + Header);
+	        			System.out.println("value ============================" + Value);
 	        			for(int j=0; j<Header.length;j++) 
 	        			{
 	        				if(j < Value.length) {
@@ -201,8 +211,7 @@ public class PersonService {
 	        				{map.put(Header[j],"");
 	        				document1.addField(Header[j].toString(),"");
 	        				}
-	        				
-	        				//System.out.println(map);
+
 	        			}
 	        		}
 	        		
@@ -234,101 +243,16 @@ public class PersonService {
 				solr.add(doc);
 				solr.commit();
 			} catch (SolrServerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+							e.printStackTrace();
+			} catch (IOException e) {				
 				e.printStackTrace();
 			}
 	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-	        	
-
-	           /* br = new BufferedReader(new FileReader(csvFile));
-	            while ((line = br.readLine()) != null) {
-	                // use comma as separator
-	            	String[]   con = line.split(cvsSplitBy);
-	            	
-	            	Graffiti ga = new Graffiti();*/
-	            	
-	            	
-	            	/*	            	ga.setExchange(Integer.parseInt(con[0]));
-	            	ga.setSecurity_Type(Integer.parseInt(con[1]));
-	            	ga.setSymbol(Integer.parseInt(con[2]));
-	            	ga.setRoot_Symbol(con[3]);
-	            	ga.setListed_Currency(con[4]);
-	            	
-          	ga.setCompany_Name(con[5]);
-	            	ga.setAdditional_Company_Name(con[6]);
-	            	ga.setISIN_Code(con[7]);
-              	ga.setContract_Name(con[8]);
-	            	ga.setLocal_Instrument_Code(con[9]);
-	            	
-	            	ga.setCountry(con[10]);
-	            	ga.setMarket_specific_secu(con[11]);
-	            	ga.setMarket_specific_segm(con[12]);
-	            	ga.setListing_Market_For_t(con[13]);
-	            	ga.setOriginal_Exchange_co(con[14]);
-	            	
-	            	ga.setExchange_Code(con[15]);
-	            	ga.setQS_Symbol_suffix(con[16]);
-	            	ga.setSedol(con[17]);
-	            	ga.setMS_Performance_Id(con[18]);
-	            	ga.setGlobal_investement_id(con[19]);
-	            	
-	            	ga.setMS_Listing_exchange(con[20]);
-	            	ga.setMS_Extended_Support(con[21]);
-	            	ga.setMorningStar_id(con[22]);
-	            	ga.setS3076(con[23]);
-	            	ga.setExpiryDate(con[24]);
-	            	
-	            	ga.setCall_or_Put(con[25]);
-	            	ga.setStrike_Price(con[26]);
-	            	ga.setTraded_Currency(con[27]);
-	            	
-	            	//lst.add(ga);
-	            	//aa= con;
-	            	
-	            }
-	            }
-	            catch(FileNotFoundException e) 
-	            {
-	                e.printStackTrace();
-	            }
-	        catch (IOException e)
-	        	{
-	            e.printStackTrace();
-	        	} 
-	        finally
-	        {
-	        	 try {
-	                    br.close();
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-	        }  */
+	    
+	       
+	        }
 	        
-	       return doc;
+	 return doc;
 	}	
 	
 	

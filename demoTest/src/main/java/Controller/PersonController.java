@@ -193,6 +193,29 @@ public class PersonController {
 	}
 	
 
+	@RequestMapping(value="/del")
+	public String delAll() 
+	{
+	
+		 String urlString = "http://localhost:8983/solr/newCollFlim";
+	        String UML =    "http://localhost:8983/solr/fruitSeller";
+	        HttpSolrClient solr = new HttpSolrClient.Builder(UML).build();
+	        solr.setParser(new XMLResponseParser());
+	        
+	        try {
+				solr.deleteByQuery("*:*");
+				solr.commit(); 
+				
+			} catch (SolrServerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+	        
+	        return "All Documents Deleted";
+    }
 	
 	
 }
