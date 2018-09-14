@@ -1,5 +1,6 @@
 package Controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -217,5 +218,26 @@ public class PersonController {
 	        return "All Documents Deleted";
     }
 	
+	
+	@RequestMapping(value="/folder")
+	public List<String> folderName() 
+	{
+		File directory = new File("D:\\Assignment");
+		
+	
+		
+		File[] fList = directory.listFiles();
+
+		List<String> lst = new ArrayList<String>();
+	
+		
+		for(File file : fList) 
+		{
+			lst.add(file.getAbsolutePath());
+		}
+		
+	        
+	        return lst;
+    }
 	
 }

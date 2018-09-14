@@ -141,16 +141,16 @@ public class PersonService {
 	
 	public Collection<SolrInputDocument> CVSThorHammer() 
 	{
-		 String csvFile = "D:\\Assignment\\Transformer.csv";
+		 /*String csvFile = "D:\\Assignment\\Transformer.csv";
 		 String csvFiletransformer1 = "D:\\Assignment\\Transformer1.csv";
-		 String csvFiletransformer2 = "D:\\Assignment\\Transformer2.csv";
+		 String csvFiletransformer2 = "D:\\Assignment\\Transformer2.csv";*/
 
 		 
-		 List<String> fileList = new ArrayList<String>();
+		/* List<String> fileList = new ArrayList<String>();
 		 fileList.add(csvFile);
 		 fileList.add(csvFiletransformer1);
 		 fileList.add(csvFiletransformer2);
-		 
+		 */
 	        BufferedReader br = null;
 	        String line = "";
 	        String cvsSplitBy = ",";
@@ -159,6 +159,25 @@ public class PersonService {
 	        List<String[]> allData=null ;
 	        
 	        List<Map<String,String>> mapLst = new ArrayList<Map<String,String>>();
+	        
+	        
+	        
+	        
+	        
+	        //get the list of files.....
+	        File directory = new File("D:\\Assignment\\Transformers");
+			
+	    	
+			
+			File[] fList = directory.listFiles();
+
+			List<String> lamb = new ArrayList<String>();
+		
+			
+			for(File file : fList) 
+			{
+				lamb.add(file.getAbsolutePath());
+			}
 	        
 	        
 	        
@@ -172,14 +191,14 @@ public class PersonService {
 	        
 	        
 	        
-	        for(int arr=0; arr<fileList.size();arr++)
+	        for(int arr=0; arr<lamb.size();arr++)
 	        {
 	        	int i=1;
 	        	int k = 0;
 	        try {
 	        
 	        	
-	        	br  = new BufferedReader(new FileReader(fileList.get(arr).toString()) );
+	        	br  = new BufferedReader(new FileReader(lamb.get(arr).toString()) );
 	        	
 	        	String[] Header = null,Value;
 	        	
