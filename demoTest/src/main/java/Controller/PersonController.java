@@ -19,6 +19,8 @@ import org.apache.solr.common.SolrInputDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,10 +42,10 @@ public class PersonController {
 		return ps.getAll();
 	}
 
-	@RequestMapping("{id}")
-	public Person getPerson(@PathVariable("id") String id,@PathVariable("name") String name ) 
+	@RequestMapping(value="user", method = RequestMethod.GET)
+	public String getPerson(@RequestParam("param1") String param1Value,@RequestParam("param2") String param2Value ) 
 	{
-		return ps.getPerson(id);
+		return param1Value+" "+param2Value;
 	}
 	
 	@RequestMapping(value="/ConnectSolr")
@@ -80,7 +82,7 @@ public class PersonController {
 	
 
 	@RequestMapping(value="/grapa", produces= {"application/xml", "application/json" })
-	public List<String> GetBlog() 
+	public List<String> GetBlog(@RequestParam("name") String param1Value,@RequestParam("value") String param2Value) 
 	{
 		String urlString = "http://localhost:8983/solr/fruitSeller";
     	HttpSolrClient solr = new HttpSolrClient.Builder(urlString).build();
@@ -92,8 +94,8 @@ public class PersonController {
     	
     	//Querying Solr...
     	SolrQuery query = new SolrQuery();
-    	String name="Contract_name";
-    	String value="MorningStar";
+    	String name=param1Value;
+    	String value=param2Value;
     	query.add("q", name+":"+value);
     	
     	/*//Name of fields
@@ -137,7 +139,7 @@ public class PersonController {
     }
 	
 	@RequestMapping(value="/delAll")
-	public void del() 
+	public String del(@RequestParam("id") String id) 
 	{
 	
 		 String urlString = "http://localhost:8983/solr/newCollFlim";
@@ -146,7 +148,7 @@ public class PersonController {
 	        solr.setParser(new XMLResponseParser());
 	        
 	        try {
-				solr.deleteByQuery("*");
+				solr.deleteById(id);
 				solr.commit(); 
 				
 			} catch (SolrServerException e) {
@@ -155,7 +157,9 @@ public class PersonController {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}  
+			} 
+	        
+	        return "Document Deleted";
     }
 	
 	
