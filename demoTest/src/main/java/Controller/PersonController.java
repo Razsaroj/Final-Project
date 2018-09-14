@@ -3,6 +3,7 @@ package Controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class PersonController {
 	}
 
 	@RequestMapping("{id}")
-	public Person getPerson(@PathVariable("id") String id ) 
+	public Person getPerson(@PathVariable("id") String id,@PathVariable("name") String name ) 
 	{
 		return ps.getPerson(id);
 	}
@@ -77,20 +78,30 @@ public class PersonController {
 	}
 	
 	
+
 	@RequestMapping(value="/grapa", produces= {"application/xml", "application/json" })
 	public List<String> GetBlog() 
 	{
-		String urlString = "http://localhost:8983/solr/newCollFlim";
+		String urlString = "http://localhost:8983/solr/fruitSeller";
     	HttpSolrClient solr = new HttpSolrClient.Builder(urlString).build();
+    	List<String> lst = new ArrayList<String>();
+    	//getting query response..
+    	QueryResponse response;
+    	
+    	
     	
     	//Querying Solr...
     	SolrQuery query = new SolrQuery();
-    	query.add("q", "*:*");
+    	String name="Contract_name";
+    	String value="MorningStar";
+    	query.add("q", name+":"+value);
     	
-    	List<String> lst = new ArrayList<String>();
+    	/*//Name of fields
+    	String[] fields= {"Country","Exchange"};
+    	query.setFields(fields);
+    	*/
     	
-    	//getting query response..
-    	QueryResponse response;
+    	
     	
 		try 
 		{
@@ -147,6 +158,35 @@ public class PersonController {
 			}  
     }
 	
+	
+	
+	@RequestMapping(value="/updateDoc")
+	public void update() 
+	{
+		String UML =    "http://localhost:8983/solr/fruitSeller";
+        HttpSolrClient solr = new HttpSolrClient.Builder(UML).build();
+        
+        SolrInputDocument sdoc = new SolrInputDocument();
+        sdoc.addField("id", "78d70bc9-ef90-4744-b0ed-98e62a8d41b0");
+        Map<String, Object> fieldMod = new HashMap<String, Object>(1);
+        fieldMod.put("set","MorningStar");
+        sdoc.addField("Contract_name", fieldMod);
+        
+        try {
+			solr.add(sdoc);
+			solr.commit();
+			solr.close();
+		} catch (SolrServerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        
+        
+	}
 	
 
 	

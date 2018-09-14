@@ -136,7 +136,6 @@ public class PersonService {
 		
 		return CrawlList;
 	}
-	
 	public Collection<SolrInputDocument> CVSThorHammer() 
 	{
 		 String csvFile = "D:\\Assignment\\Transformer.csv";
@@ -157,6 +156,7 @@ public class PersonService {
 	        HttpSolrClient solr = new HttpSolrClient.Builder(UML).build();
 	        solr.setParser(new XMLResponseParser());
 	        Collection<SolrInputDocument> doc = new ArrayList<SolrInputDocument>();
+	        int k = 0;
 	        
 	        try {
 	        	
@@ -183,6 +183,7 @@ public class PersonService {
 	        		{
 	        			i++;
 	        			Header = line.split(",");
+	        			continue;
 	        		//	System.out.println("Header Count.............................. " + Header.length );
 	        		}
 	        		else 
@@ -194,11 +195,11 @@ public class PersonService {
 	        			{
 	        				if(j < Value.length) {
 	        				map.put(Header[j], Value[j]);
-	        				document1.addField(Header[j],Value[j]);
+	        				document1.addField(Header[j].toString(),Value[j].toString());
 	        				}
 	        				else
 	        				{map.put(Header[j],"");
-	        				document1.addField(Header[j],"");
+	        				document1.addField(Header[j].toString(),"");
 	        				}
 	        				
 	        				//System.out.println(map);
@@ -208,7 +209,10 @@ public class PersonService {
 	        	
 	        		doc.add(document1);
 	        		mapLst.add(map);
-	        		//System.out.println(map);
+	        		if(k==100)
+	        			break;
+
+	        		k++;
 	        	}
 	        	
 	        	
@@ -225,7 +229,8 @@ public class PersonService {
 	        ////////////////////////////// Sending Whole data to Server //////////////////////////////////////////////
 	        
 	        try {
-	        	System.out.println(doc.toString());
+	        	System.out.println("Value of k" + k);
+	        	
 				solr.add(doc);
 				solr.commit();
 			} catch (SolrServerException e) {
@@ -261,7 +266,6 @@ public class PersonService {
 
 	           /* br = new BufferedReader(new FileReader(csvFile));
 	            while ((line = br.readLine()) != null) {
-
 	                // use comma as separator
 	            	String[]   con = line.split(cvsSplitBy);
 	            	
@@ -305,9 +309,7 @@ public class PersonService {
 	            	//lst.add(ga);
 	            	//aa= con;
 	            	
-
 	            }
-
 	            }
 	            catch(FileNotFoundException e) 
 	            {
@@ -327,8 +329,7 @@ public class PersonService {
 	        }  */
 	        
 	       return doc;
-	}
-	
+	}	
 	
 	
 }
